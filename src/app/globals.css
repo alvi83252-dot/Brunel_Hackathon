@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-source), "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: #f5f7fa;
+  --foreground: #102033;
+  --card: #ffffff;
+  --card-foreground: #102033;
+  --primary: #07294d;
+  --primary-foreground: #ffffff;
+  --secondary: #e7eef6;
+  --secondary-foreground: #07294d;
+  --accent: #f37021;
+  --accent-foreground: #1c1208;
+  --muted: #e7eef6;
+  --muted-foreground: #4e6078;
+  --destructive: #9f1239;
+  --border: #d5dee8;
+  --input: #d5dee8;
+  --ring: #f37021;
+  --radius: 0.9rem;
+}
+
+.dark {
+  --background: #071525;
+  --foreground: #e8eef6;
+  --card: #0c2340;
+  --card-foreground: #e8eef6;
+  --primary: #e8eef6;
+  --primary-foreground: #07294d;
+  --secondary: #123054;
+  --secondary-foreground: #e8eef6;
+  --accent: #f37021;
+  --accent-foreground: #1c1208;
+  --muted: #123054;
+  --muted-foreground: #b7c5d6;
+  --border: #1e3f66;
+  --input: #1e3f66;
+  --ring: #f37021;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.masthead {
+  background-color: #07294d;
+  background-image:
+    radial-gradient(ellipse at 100% 0%, rgba(243, 112, 33, 0.35), transparent 42%),
+    radial-gradient(ellipse at 0% 100%, rgba(79, 140, 196, 0.28), transparent 40%);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 80;
+  transform: translateY(-200%);
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #07294d;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: none;
+  outline: 2px solid #f37021;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #07294d;
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

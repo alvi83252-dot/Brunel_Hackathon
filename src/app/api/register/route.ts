@@ -1,0 +1,37 @@
+import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { fieldErrorsFromZod, registerSchema } from "@/lib/validators";
+import { jsonError } from "@/server/errors";
+
+export async function POST(request: Request) {
+  try {
+    const parsed = registerSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Check the highlighted fields.", fieldErrors: fieldErrorsFromZod(parsed.error) }, { status: 400 });
+    }
+    const existing = await prisma.user.findFirst({
+      where: { OR: [{ email: parsed.data.email }, { studentId: parsed.data.studentId }] },
+    });
+    if (existing?.role === "JUDGE") {
+      return NextResponse.json(
+        { error: "This email is reserved for a judge account.", fieldErrors: { email: "This email is reserved for a judge account." } },
+        { status: 409 },
+      );
+    }
+    if (existing) {
+      const fieldErrors: Record<string, string> = {};
+      if (existing.email === parsed.data.email) fieldErrors.email = "An account with this email already exists.";
+      if (existing.studentId === parsed.data.studentId) fieldErrors.studentId = "An account with this student ID already exists.";
+      return NextResponse.json({ error: "Those details are already registered.", fieldErrors }, { status: 409 });
+    }
+    const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+    const user = await prisma.user.create({
+      data: { name: parsed.data.name, email: parsed.data.email, studentId: parsed.data.studentId, passwordHash, role: "PARTICIPANT" },
+      select: { id: true, email: true, name: true, role: true },
+    });
+    return NextResponse.json({ user }, { status: 201 });
+  } catch (error) {
+    return jsonError(error);
+  }
+}

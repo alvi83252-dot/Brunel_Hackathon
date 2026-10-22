@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  name         String
+  email        String       @unique
+  studentId    String?      @unique
+  passwordHash String
+  role         String
+  teams        Team[]
+  scores       JudgeScore[]
+  notifications Notification[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Track {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  summary   String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+}
+
+model Team {
+  id            String       @id @default(cuid())
+  name          String       @unique
+  displayNumber Int          @unique
+  ownerId       String       @unique
+  owner         User         @relation(fields: [ownerId], references: [id])
+  members       TeamMember[]
+  project       Project?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model TeamMember {
+  id        String  @id @default(cuid())
+  teamId    String
+  team      Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  fullName  String
+  studentId String  @unique
+  email     String  @unique
+  isCaptain Boolean @default(false)
+
+  @@index([teamId])
+}
+
+model Project {
+  id               String             @id @default(cuid())
+  teamId           String             @unique
+  team             Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  trackId          String
+  track            Track              @relation(fields: [trackId], references: [id])
+  title            String
+  shortDescription String
+  problemStatement String
+  proposedSolution String
+  expectedImpact   String
+  submission       Submission?
+  scores           JudgeScore[]
+  awards           Award[]
+  leaderboard      LeaderboardEntry?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([trackId])
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  githubUrl   String
+  demoUrl     String?
+  docsUrl     String?
+  notes       String?
+  submittedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model JudgeScore {
+  id              String          @id @default(cuid())
+  projectId       String
+  project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  judgeId         String
+  judge           User            @relation(fields: [judgeId], references: [id])
+  technical       Int?
+  innovation      Int?
+  impact          Int?
+  solution        Int?
+  sponsor         Int?
+  business        Int?
+  presentation    Int?
+  recommendation  String?
+  status          String          @default("DRAFT")
+  weightedScore   Float?
+  comments        JudgeComment[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([projectId, judgeId])
+  @@index([projectId])
+  @@index([judgeId])
+}
+
+model JudgeComment {
+  id        String     @id @default(cuid())
+  scoreId   String
+  score     JudgeScore @relation(fields: [scoreId], references: [id], onDelete: Cascade)
+  criterion String
+  body      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([scoreId, criterion])
+}
+
+model Award {
+  id        String    @id @default(cuid())
+  type      String    @unique
+  label     String
+  detail    String
+  projectId String?
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  score     Float?
+  updatedAt DateTime  @updatedAt
+}
+
+model LeaderboardEntry {
+  id           String   @id @default(cuid())
+  projectId    String   @unique
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  rank         Int
+  trackRank    Int
+  averageScore Float
+  judgeCount   Int
+  updatedAt    DateTime @updatedAt
+}
+
+model HackathonSettings {
+  id                   String   @id @default("hackathon")
+  name                 String
+  venue                String
+  eventLabel           String
+  registrationDeadline DateTime
+  submissionDeadline   DateTime
+  judgingDeadline      DateTime
+  blindJudging         Boolean  @default(false)
+  updatedAt            DateTime @updatedAt
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String?
+  user      User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId    String?
+  type      String
+  subject   String
+  html      String
+  text      String
+  toEmail   String
+  delivery  String
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+  @@index([teamId])
+}
