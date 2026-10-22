@@ -47,6 +47,7 @@ export const registerSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
+    .max(120, "Use 120 characters or fewer.")
     .regex(BRUNEL_EMAIL, "Use an email ending in @student.brunel.ac.uk or @brunel.ac.uk."),
   password: passwordSchema,
 });
@@ -58,13 +59,15 @@ export const judgeRegisterSchema = z.object({
     .trim()
     .toLowerCase()
     .email("Enter a valid email address.")
+    .max(120, "Use 120 characters or fewer.")
     .refine((value) => !value.endsWith("@student.brunel.ac.uk"), "Student emails are for participant accounts."),
   password: passwordSchema,
+  inviteCode: z.string().trim().min(1, "Enter the invite code from the organisers.").max(200),
 });
 
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email("Enter a valid email address."),
-  password: z.string().min(1, "Enter your password."),
+  email: z.string().trim().toLowerCase().email("Enter a valid email address.").max(120, "Use 120 characters or fewer."),
+  password: z.string().min(1, "Enter your password.").max(72, "Use 72 characters or fewer."),
 });
 
 export const memberSchema = z.object({
@@ -74,6 +77,7 @@ export const memberSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
+    .max(120, "Use 120 characters or fewer.")
     .regex(BRUNEL_EMAIL, "Use an email ending in @student.brunel.ac.uk or @brunel.ac.uk."),
 });
 
@@ -142,7 +146,7 @@ export const submissionSchema = z.object({
 export function canonicalGithubRepo(value: string) {
   try {
     const url = new URL(value.trim());
-    if (url.protocol !== "https:" || !GITHUB_HOSTS.has(url.hostname.toLowerCase())) return null;
+    if (url.username || url.password || url.protocol !== "https:" || !GITHUB_HOSTS.has(url.hostname.toLowerCase())) return null;
     const parts = url.pathname.split("/").filter(Boolean);
     if (parts.length !== 2) return null;
     let repo = parts[1] ?? "";
@@ -157,10 +161,30 @@ export function canonicalGithubRepo(value: string) {
 function isHttpsUrl(value: string) {
   try {
     const url = new URL(value);
-    return url.protocol === "https:" && Boolean(url.hostname);
+    if (url.protocol !== "https:" || url.username || url.password) return false;
+    const host = url.hostname.toLowerCase();
+    if (!host.includes(".")) return false;
+    return !isBlockedHost(host);
   } catch {
     return false;
   }
+}
+
+function isBlockedHost(hostname: string) {
+  const host = hostname.replace(/^\[|\]$/g, "");
+  if (host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local")) return true;
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4) {
+    const parts = ipv4.slice(1).map(Number);
+    if (parts.some((part) => part > 255)) return true;
+    const [a, b] = parts;
+    if (a === 0 || a === 10 || a === 127) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 100 && b >= 64 && b <= 127) return true;
+  }
+  return host === "::1" || host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80");
 }
 
 const scoreValue = z.number({ invalid_type_error: "Choose a score from 1 to 10." }).int().min(1).max(10).nullable();

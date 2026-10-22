@@ -51,8 +51,8 @@ export function SubmissionForm({
   return (
     <form className="grid gap-5" onSubmit={onSubmit} noValidate>
       {submittedAt ? (
-        <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100" role="status">
-          <p className="text-lg font-bold">Submission successful</p>
+        <div className="border border-emerald-300 bg-emerald-50 p-4 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100" role="status">
+          <p className="text-base font-semibold">Submission successful</p>
           <p className="mt-1 text-sm">Received {submittedAt}. You can update the links until the deadline.</p>
         </div>
       ) : null}

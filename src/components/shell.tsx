@@ -21,66 +21,110 @@ export function Shell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const app = links.length > 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="masthead text-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-4 sm:px-6">
-          <Link href={home} className="flex min-w-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-            <BrandMark />
-            <span className="min-w-0">
-              <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Brunel University London</span>
-              <span className="block truncate text-base font-bold sm:text-lg">{eyebrow}</span>
-            </span>
-          </Link>
-          <div className="ml-auto flex items-center gap-2">
-            <ThemeToggle ghost />
-            {user ? (
-              <Button type="button" variant="ghost" onClick={() => signOut({ callbackUrl: "/" })}>
+      {app ? (
+        <div className="lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)]">
+          <aside className="border-b border-border bg-card lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:border-b-0 lg:border-r">
+            <div className="flex items-center gap-3 px-4 py-3">
+              <Link href={home} className="flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <BrandMark className="h-10 w-auto rounded-sm" />
+                <span className="min-w-0">
+                  <span className="kicker block">Brunel</span>
+                  <span className="block truncate text-sm font-semibold">{eyebrow}</span>
+                </span>
+              </Link>
+              <div className="ml-auto flex items-center gap-1 lg:hidden">
+                <ThemeToggle />
+                {user ? (
+                  <Button type="button" size="sm" variant="ghost" onClick={() => signOut({ callbackUrl: "/" })}>
+                    Sign out
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+            <nav className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible lg:px-3 lg:pb-4" aria-label="Portal">
+              {links.map((link) => {
+                const active = link.href === "/participant" || link.href === "/judge" ? pathname === link.href : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`shrink-0 rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:w-full ${active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"}`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="hidden border-t border-border px-4 py-4 lg:block">
+              {user ? (
+                <>
+                  <p className="truncate text-sm font-semibold">{user.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                </>
+              ) : null}
+              <button type="button" className="mt-3 text-sm font-semibold text-muted-foreground hover:text-foreground" onClick={() => signOut({ callbackUrl: "/" })}>
                 Sign out
-              </Button>
-            ) : (
-              <>
-                <Button asChild variant="ghost">
-                  <Link href="/login">Sign in</Link>
-                </Button>
-                <Button asChild variant="accent">
-                  <Link href="/register">Create account</Link>
-                </Button>
-              </>
-            )}
+              </button>
+            </div>
+          </aside>
+          <div className="min-w-0">
+            <div className="hidden h-12 items-center justify-end gap-2 border-b border-border bg-card px-4 sm:px-8 lg:flex">
+              <ThemeToggle />
+            </div>
+            <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl px-4 py-8 focus:outline-none sm:px-8 sm:py-10">
+              {children}
+            </main>
           </div>
         </div>
-        {links.length > 0 && (
-          <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 pb-4 sm:px-6" aria-label="Portal">
-            {links.map((link) => {
-              const active = link.href === "/participant" || link.href === "/judge" ? pathname === link.href : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`shrink-0 rounded-full px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${active ? "bg-white text-[#07294D]" : "text-white/85 hover:bg-white/10"}`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-        )}
-      </header>
-      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-8 focus:outline-none sm:px-6">
-        {children}
-      </main>
-      <footer className="border-t border-border px-4 py-6 text-sm text-muted-foreground sm:px-6">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-          <p>Brunel University Hackathon Management Portal</p>
-          {user ? <p>{user.name}</p> : <p>Eastern Gateway, Brunel University London</p>}
-        </div>
-      </footer>
+      ) : (
+        <>
+          <header className="border-b border-border bg-card">
+            <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+              <Link href={home} className="flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <BrandMark className="h-10 w-auto rounded-sm" />
+                <span className="min-w-0">
+                  <span className="kicker block">Brunel University London</span>
+                  <span className="block truncate text-sm font-semibold">{eyebrow}</span>
+                </span>
+              </Link>
+              <div className="ml-auto flex items-center gap-2">
+                <ThemeToggle />
+                {user ? (
+                  <Button type="button" size="sm" variant="secondary" onClick={() => signOut({ callbackUrl: "/" })}>
+                    Sign out
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild size="sm" variant="ghost">
+                      <Link href="/login">Sign in</Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link href="/register">Create account</Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </header>
+          <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-12 focus:outline-none sm:px-6 sm:py-16">
+            {children}
+          </main>
+          <footer className="border-t border-border px-4 py-6 text-sm text-muted-foreground sm:px-6">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+              <p>Brunel University Hackathon Management Portal</p>
+              {user ? <p>{user.name}</p> : <p>Eastern Gateway, Brunel University London</p>}
+            </div>
+          </footer>
+        </>
+      )}
     </div>
   );
 }

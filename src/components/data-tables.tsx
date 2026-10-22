@@ -63,7 +63,7 @@ export function LeaderboardTable({ rows }: { rows: LeaderboardRow[] }) {
 
   return (
     <div className="grid gap-4">
-      <div className="flex gap-2 overflow-x-auto" role="tablist" aria-label="Track leaderboards">
+      <div className="flex gap-1 overflow-x-auto border-b border-border" role="tablist" aria-label="Track leaderboards">
         <TrackButton active={track === "all"} onClick={() => setTrack("all")}>
           Overall
         </TrackButton>
@@ -73,14 +73,14 @@ export function LeaderboardTable({ rows }: { rows: LeaderboardRow[] }) {
           </TrackButton>
         ))}
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border">
+      <div className="overflow-x-auto border border-border bg-card">
         <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-          <thead className="bg-secondary text-secondary-foreground">
+          <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
                 {group.headers.map((header) => (
                   <th key={header.id} className="px-3 py-3 font-semibold">
-                    <button type="button" className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={header.column.getToggleSortingHandler()}>
+                    <button type="button" className="uppercase tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={header.column.getToggleSortingHandler()}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {{ asc: " ↑", desc: " ↓" }[header.column.getIsSorted() as string] ?? ""}
                     </button>
@@ -163,18 +163,18 @@ export function ProjectTable({ rows }: { rows: ProjectRow[] }) {
   const table = useReactTable({ data: rows, columns, state: { sorting }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel() });
 
   if (rows.length === 0) {
-    return <p className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">No ideas have been submitted yet.</p>;
+    return <p className="border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">No ideas have been submitted yet.</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border">
+    <div className="overflow-x-auto border border-border bg-card">
       <table className="w-full min-w-[860px] border-collapse text-left text-sm">
-        <thead className="bg-secondary">
+        <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
           {table.getHeaderGroups().map((group) => (
             <tr key={group.id}>
               {group.headers.map((header) => (
                 <th key={header.id} className="px-3 py-3 font-semibold">
-                  <button type="button" onClick={header.column.getToggleSortingHandler()}>
+                  <button type="button" className="uppercase tracking-wide" onClick={header.column.getToggleSortingHandler()}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </button>
                 </th>
@@ -205,7 +205,7 @@ function TrackButton({ active, children, onClick }: { active: boolean; children:
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`shrink-0 rounded-full px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+      className={`shrink-0 border-b-2 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-foreground font-semibold text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
     >
       {children}
     </button>

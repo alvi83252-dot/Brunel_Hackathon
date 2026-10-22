@@ -63,12 +63,14 @@ export function IdeaForm({
     <form className="grid gap-5" onSubmit={onSubmit} noValidate>
       <fieldset className="grid gap-3">
         <legend className="text-sm font-semibold">Track</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="divide-y divide-border border-y border-border">
           {tracks.map((track) => (
-            <label key={track.id} className={`cursor-pointer rounded-2xl border p-4 ${values.trackId === track.id ? "border-accent bg-accent/10" : "border-border bg-card"}`}>
-              <input className="sr-only" type="radio" name="trackId" value={track.id} checked={values.trackId === track.id} disabled={locked || pending} onChange={() => set("trackId", track.id)} />
-              <span className="block font-semibold">{track.name}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{track.summary}</span>
+            <label key={track.id} className={`flex cursor-pointer gap-3 py-3 ${values.trackId === track.id ? "text-foreground" : "text-muted-foreground"}`}>
+              <input className="mt-1 accent-[#07294D]" type="radio" name="trackId" value={track.id} checked={values.trackId === track.id} disabled={locked || pending} onChange={() => set("trackId", track.id)} />
+              <span>
+                <span className="block text-sm font-semibold text-foreground">{track.name}</span>
+                <span className="mt-0.5 block text-sm leading-6">{track.summary}</span>
+              </span>
             </label>
           ))}
         </div>

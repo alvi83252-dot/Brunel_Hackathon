@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { readJsonBody } from "@/lib/security";
 import { settingsSchema } from "@/lib/validators";
 import { jsonError } from "@/server/errors";
 import { requireUser } from "@/server/guards";
@@ -24,7 +25,7 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     await requireUser("JUDGE");
-    const parsed = settingsSchema.parse(await request.json());
+    const parsed = settingsSchema.parse(await readJsonBody(request));
     const settings = await prisma.hackathonSettings.update({
       where: { id: "hackathon" },
       data: { blindJudging: parsed.blindJudging },

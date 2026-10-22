@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Countdown } from "@/components/countdown";
+import { MetricStrip, PageHeader } from "@/components/page-header";
 import { entrySteps, StepProgress } from "@/components/step-progress";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { formatWhen } from "@/lib/utils";
 import { requireUser } from "@/server/guards";
@@ -22,80 +22,76 @@ export default async function ParticipantDashboard() {
   });
   const nextDeadline = team ? settings.submissionDeadline : settings.registrationDeadline;
   const nextLabel = team ? "Submission closes" : "Registration closes";
+  const nextHref = team?.project?.submission ? "/participant/submission" : team?.project ? "/participant/submission" : team ? "/participant/idea" : "/participant/team";
+  const nextLabelAction = team?.project?.submission ? "Review submission" : team?.project ? "Add repository" : team ? "Submit idea" : "Register team";
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <PageHeader
+        kicker="Participant"
+        title="Your hackathon"
+        description={`${settings.name} · ${settings.eventLabel}`}
+        action={
+          <Button asChild>
+            <Link href={nextHref}>{nextLabelAction}</Link>
+          </Button>
+        }
+      />
+
+      <MetricStrip
+        items={[
+          { label: "Team", value: team?.name ?? "Not registered" },
+          { label: "Track", value: team?.project?.track.name ?? "Not chosen" },
+          { label: "Project", value: team?.project?.title ?? "No idea yet" },
+          { label: "Registered", value: team ? formatWhen(team.createdAt) : "—" },
+          { label: "Idea", value: team?.project ? "Submitted" : "Not submitted" },
+          { label: "GitHub", value: team?.project?.submission ? "Submitted" : "Not submitted" },
+          { label: "Members", value: team ? String(team.members.length) : "0" },
+          { label: "Venue", value: settings.venue },
+        ]}
+      />
+
+      <section className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)]">
         <div>
-          <h1 className="text-3xl font-bold">Your hackathon</h1>
-          <p className="mt-1 text-muted-foreground">{settings.name} · {settings.eventLabel}</p>
-        </div>
-        <Button asChild>
-          <Link href={team?.project?.submission ? "/participant/submission" : team?.project ? "/participant/submission" : team ? "/participant/idea" : "/participant/team"}>
-            {team?.project?.submission ? "Review submission" : team?.project ? "Add repository" : team ? "Submit idea" : "Register team"}
-          </Link>
-        </Button>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Completion</CardTitle>
-            <CardDescription>Team, idea, then the GitHub repository.</CardDescription>
-          </CardHeader>
-          <CardContent>
+          <h2 className="text-sm font-semibold">Entry</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Team, idea, then the GitHub repository.</p>
+          <div className="mt-4">
             <StepProgress steps={steps} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-5">
-            <Countdown deadline={nextDeadline.toISOString()} label={nextLabel} />
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+        <Countdown deadline={nextDeadline.toISOString()} label={nextLabel} />
+      </section>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Info label="Team" value={team?.name ?? "Not registered"} />
-        <Info label="Track" value={team?.project?.track.name ?? "Not chosen"} />
-        <Info label="Project" value={team?.project?.title ?? "No idea yet"} />
-        <Info label="Registered" value={team ? formatWhen(team.createdAt) : "—"} />
-        <Info label="Idea status" value={team?.project ? "Submitted" : "Not submitted"} />
-        <Info label="GitHub status" value={team?.project?.submission ? "Submitted" : "Not submitted"} />
-        <Info label="Members" value={team ? String(team.members.length) : "0"} />
-        <Info label="Venue" value={settings.venue} />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Team members</CardTitle>
-          <CardDescription>Student details stay with the team. Rankings are not shown in this portal.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {team ? (
-            <ul className="grid gap-3">
-              {team.members.map((member) => (
-                <li key={member.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-secondary px-3 py-3 text-sm">
-                  <span className="font-semibold">{member.fullName}{member.isCaptain ? " · Captain" : ""}</span>
-                  <span className="text-muted-foreground">{member.studentId} · {member.email}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">Register a team to see members here.</p>
-          )}
-        </CardContent>
-      </Card>
+      <section className="mt-12">
+        <h2 className="text-sm font-semibold">Team members</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Student details stay with the team. Rankings are not shown in this portal.</p>
+        {team ? (
+          <div className="mt-4 overflow-x-auto border border-border bg-card">
+            <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+                  <th className="px-4 py-3 font-semibold">Name</th>
+                  <th className="px-4 py-3 font-semibold">Role</th>
+                  <th className="px-4 py-3 font-semibold">Student ID</th>
+                  <th className="px-4 py-3 font-semibold">Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {team.members.map((member) => (
+                  <tr key={member.id} className="border-b border-border last:border-b-0">
+                    <td className="px-4 py-3 font-semibold">{member.fullName}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{member.isCaptain ? "Captain" : "Member"}</td>
+                    <td className="px-4 py-3 tabular-nums">{member.studentId}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="mt-4 border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">Register a team to see members here.</p>
+        )}
+      </section>
     </div>
-  );
-}
-
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="pt-5">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-1 font-bold">{value}</p>
-      </CardContent>
-    </Card>
   );
 }

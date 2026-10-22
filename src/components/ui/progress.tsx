@@ -11,9 +11,9 @@ export function Progress({ value, label, className }: { value: number; label: st
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={100}
-      className={cn("relative h-2.5 w-full overflow-hidden rounded-full bg-secondary", className)}
+      className={cn("relative h-1 w-full overflow-hidden rounded-full bg-secondary", className)}
     >
-      <ProgressPrimitive.Indicator className="h-full bg-accent transition-all" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
+      <ProgressPrimitive.Indicator className="h-full bg-primary transition-all" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
     </ProgressPrimitive.Root>
   );
 }

@@ -30,9 +30,9 @@ export function BlindToggle({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5">
+    <div className="flex flex-wrap items-center justify-between gap-4 border border-border bg-card px-5 py-4">
       <div>
-        <p className="text-lg font-bold">Blind judging {on ? "on" : "off"}</p>
+        <p className="text-base font-semibold">Blind judging {on ? "on" : "off"}</p>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           When this is on, team names, student names, student IDs, and emails are replaced with Team #001, Team #002, and so on.
         </p>

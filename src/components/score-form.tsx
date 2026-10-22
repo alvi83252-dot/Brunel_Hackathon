@@ -125,17 +125,17 @@ export function ScoreForm({ projectId, open, initial }: { projectId: string; ope
         void persist("SUBMITTED", true).finally(() => setPendingSubmit(false));
       }}
     >
-      <div className="rounded-2xl bg-[#07294D] p-4 text-white">
-        <p className="text-sm text-white/75">Weighted score</p>
-        <p className="text-4xl font-bold tabular-nums">{live == null ? "—" : live.toFixed(2)}</p>
-        <p className="text-sm text-white/75">Out of 100. Each score is 1–10, multiplied by its weight, then scaled.</p>
+      <div className="border border-border bg-secondary/50 px-4 py-4">
+        <p className="kicker">Weighted score</p>
+        <p className="mt-1 font-display text-4xl tabular-nums">{live == null ? "—" : live.toFixed(2)}</p>
+        <p className="mt-1 text-sm text-muted-foreground">Out of 100. Each score is 1–10, multiplied by its weight, then scaled.</p>
         <div className="mt-4 grid gap-2">
-          <p className="text-sm text-white/75">{scoredCriteria} of {CRITERIA.length} criteria scored</p>
-          <Progress value={criteriaPercent} label={`${scoredCriteria} of ${CRITERIA.length} criteria scored`} className="bg-white/20" />
+          <p className="text-sm text-muted-foreground">{scoredCriteria} of {CRITERIA.length} criteria scored</p>
+          <Progress value={criteriaPercent} label={`${scoredCriteria} of ${CRITERIA.length} criteria scored`} />
         </div>
       </div>
       {CRITERIA.map((criterion) => (
-        <fieldset key={criterion.key} className="grid gap-2 rounded-2xl border border-border p-3">
+        <fieldset key={criterion.key} className="grid gap-2 border border-border p-3">
           <legend className="px-1 text-sm font-bold">
             {criterion.label} <span className="font-semibold text-muted-foreground">{Math.round(criterion.weight * 100)}%</span>
           </legend>
@@ -143,7 +143,7 @@ export function ScoreForm({ projectId, open, initial }: { projectId: string; ope
           <Field label="Score" htmlFor={`${criterion.key}-score`} error={errors[criterion.key]}>
             <select
               id={`${criterion.key}-score`}
-              className="min-h-11 w-full rounded-xl border border-input bg-card px-3 text-base"
+              className="min-h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
               value={draft[criterion.key] ?? ""}
               disabled={!open || pendingSubmit}
               onChange={(event) => setScore(criterion.key, event.target.value)}
@@ -172,7 +172,7 @@ export function ScoreForm({ projectId, open, initial }: { projectId: string; ope
       <Field label="Recommendation" htmlFor="recommendation" error={errors.recommendation}>
         <select
           id="recommendation"
-          className="min-h-11 w-full rounded-xl border border-input bg-card px-3 text-base"
+          className="min-h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
           value={draft.recommendation ?? ""}
           disabled={!open || pendingSubmit}
           onChange={(event) => setDraft({ ...draft, recommendation: (event.target.value || null) as RecommendationValue | null })}

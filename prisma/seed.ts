@@ -17,8 +17,9 @@ export async function seed() {
     });
   }
 
-  if (process.env.SHOW_DEMO_ACCOUNTS === "true") {
-    const passwordHash = await bcrypt.hash("BrunelJudge2026!", 12);
+  const demoPassword = process.env.DEMO_JUDGE_PASSWORD?.trim();
+  if (demoPassword && process.env.NODE_ENV !== "production" && process.env.VERCEL !== "1") {
+    const passwordHash = await bcrypt.hash(demoPassword, 12);
     for (const judge of JUDGES) {
       await prisma.user.upsert({
         where: { email: judge.email },

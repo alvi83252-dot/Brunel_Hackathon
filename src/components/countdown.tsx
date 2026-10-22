@@ -11,14 +11,14 @@ export function Countdown({ deadline, label }: { deadline: string; label: string
     return () => window.clearInterval(timer);
   }, []);
 
-  if (now == null) return <div className="h-20 animate-pulse rounded-2xl bg-secondary" aria-hidden="true" />;
+  if (now == null) return <div className="h-24 animate-pulse bg-secondary" aria-hidden="true" />;
 
   const diff = new Date(deadline).getTime() - now;
   if (diff <= 0) {
     return (
       <div>
-        <p className="text-sm font-semibold text-muted-foreground">{label}</p>
-        <p className="mt-1 text-2xl font-bold">Deadline passed</p>
+        <p className="kicker">{label}</p>
+        <p className="mt-2 font-display text-3xl">Deadline passed</p>
       </div>
     );
   }
@@ -36,12 +36,12 @@ export function Countdown({ deadline, label }: { deadline: string; label: string
 
   return (
     <div>
-      <p className="text-sm font-semibold text-muted-foreground">{label}</p>
-      <dl className="mt-3 grid grid-cols-4 gap-2">
+      <p className="kicker">{label}</p>
+      <dl className="mt-3 grid grid-cols-4 gap-px overflow-hidden border border-border bg-border">
         {parts.map(([name, value]) => (
-          <div key={name} className="rounded-xl bg-secondary px-2 py-2 text-center">
-            <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{name}</dt>
-            <dd className="text-xl font-bold tabular-nums">{String(value).padStart(2, "0")}</dd>
+          <div key={name} className="bg-card px-2 py-3 text-center">
+            <dt className="kicker">{name}</dt>
+            <dd className="mt-1 font-display text-3xl tabular-nums">{String(value).padStart(2, "0")}</dd>
           </div>
         ))}
       </dl>

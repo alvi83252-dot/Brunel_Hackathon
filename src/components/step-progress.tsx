@@ -22,31 +22,27 @@ export function StepProgress({ steps }: { steps: ProgressStep[] }) {
   const onStep = currentIndex === -1 ? steps.length : currentIndex + 1;
 
   return (
-    <div className="grid gap-3">
+    <div className="grid gap-4">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-semibold">{doneCount === steps.length ? "Entry complete" : `Step ${onStep} of ${steps.length}`}</p>
         <p className="text-sm tabular-nums text-muted-foreground">{percent}%</p>
       </div>
       <Progress value={percent} label={`${doneCount} of ${steps.length} steps complete`} />
-      <ol className="grid gap-2 sm:grid-cols-3">
+      <ol className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-3">
         {steps.map((step, index) => {
           const current = index === currentIndex;
           return (
-            <li key={step.href}>
+            <li key={step.href} className="bg-card">
               <Link
                 href={step.href}
                 aria-current={current ? "step" : undefined}
-                className={`flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                  step.done
-                    ? "bg-emerald-50 text-emerald-950 dark:bg-emerald-950 dark:text-emerald-100"
-                    : current
-                      ? "bg-accent/15 text-foreground"
-                      : "bg-secondary text-muted-foreground"
-                }`}
+                className="flex min-h-12 items-center gap-3 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="tabular-nums">{index + 1}</span>
-                <span>{step.label}</span>
-                {step.done ? <span className="ml-auto text-xs">Done</span> : current ? <span className="ml-auto text-xs">Now</span> : null}
+                <span className={`flex h-6 w-6 shrink-0 items-center justify-center border text-xs tabular-nums ${step.done || current ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}>
+                  {index + 1}
+                </span>
+                <span className={step.done || current ? "font-semibold" : "text-muted-foreground"}>{step.label}</span>
+                {step.done ? <span className="ml-auto text-xs text-muted-foreground">Done</span> : current ? <span className="ml-auto text-xs text-accent">Now</span> : null}
               </Link>
             </li>
           );

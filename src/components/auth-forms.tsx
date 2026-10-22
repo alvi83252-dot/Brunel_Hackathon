@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { loadRegisterDraft, loadRememberedAccount, rememberAccount, saveRegisterDraft, type AccountRole, type RememberedAccount } from "@/lib/local-account";
 
-export function LoginForm({ showDemo }: { showDemo: boolean }) {
+export function LoginForm() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -37,7 +37,7 @@ export function LoginForm({ showDemo }: { showDemo: boolean }) {
       redirect: false,
     });
     if (result?.error) {
-      setError("Those details were not recognised.");
+      setError(result.code === "too_many_attempts" ? "Too many attempts. Wait a few minutes and try again." : "Those details were not recognised.");
       setPending(false);
       return;
     }
@@ -79,17 +79,6 @@ export function LoginForm({ showDemo }: { showDemo: boolean }) {
             {pending ? "Signing in…" : "Sign in"}
           </Button>
         </form>
-        {showDemo ? (
-          <div className="mt-5 rounded-xl bg-secondary p-4 text-sm">
-            <p className="font-semibold">Judge demo accounts</p>
-            <p className="mt-1 text-muted-foreground">Password for each judge: BrunelJudge2026!</p>
-            <ul className="mt-2 space-y-1">
-              <li>amira.khan@brunel.ac.uk</li>
-              <li>james.okonkwo@brunel.ac.uk</li>
-              <li>priya.shah@brunel.ac.uk</li>
-            </ul>
-          </div>
-        ) : null}
         <p className="mt-4 text-sm text-muted-foreground">
           New participant? <Link className="font-semibold text-foreground underline" href="/register/participant">Create a participant account</Link>
         </p>
@@ -208,6 +197,7 @@ export function JudgeRegisterForm() {
   const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const { draft, updateDraft } = useRegisterDraft("JUDGE");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -220,6 +210,7 @@ export function JudgeRegisterForm() {
       name: draft.name,
       email: draft.email,
       password: String(form.get("password") ?? ""),
+      inviteCode,
     };
     saveRegisterDraft("JUDGE", draft);
     const response = await fetch("/api/register/judge", {
@@ -250,7 +241,7 @@ export function JudgeRegisterForm() {
     <Card>
       <CardHeader>
         <CardTitle>Create a judge account</CardTitle>
-        <CardDescription>For judges and sponsors. Use Gmail, a company email, or a Brunel staff email. This account scores projects and opens the leaderboard. It cannot register a team.</CardDescription>
+        <CardDescription>For invited judges and sponsors. Use Gmail, a company email, or a Brunel staff email, plus the invite code from the organisers. This account scores projects and opens the leaderboard. It cannot register a team.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={onSubmit} noValidate>
@@ -262,6 +253,9 @@ export function JudgeRegisterForm() {
           </Field>
           <Field label="Password" htmlFor="password" error={errors.password} hint="At least 8 characters, with a letter and a number.">
             <Input id="password" name="password" type="password" autoComplete="new-password" required aria-invalid={Boolean(errors.password)} />
+          </Field>
+          <Field label="Invite code" htmlFor="inviteCode" error={errors.inviteCode} hint="Organisers share this privately. It is not stored in this browser.">
+            <Input id="inviteCode" name="inviteCode" type="password" autoComplete="off" required aria-invalid={Boolean(errors.inviteCode)} value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} />
           </Field>
           {formError && Object.keys(errors).length === 0 ? <p className="text-sm text-destructive" role="alert">{formError}</p> : null}
           <Button type="submit" disabled={pending}>{pending ? "Creating account…" : "Create judge account"}</Button>

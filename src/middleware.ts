@@ -24,9 +24,7 @@ export default auth((req) => {
 
   if (signedInArea && !signedIn) {
     if (isApi) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
-    const login = new URL("/login", req.nextUrl.origin);
-    login.searchParams.set("next", path);
-    return NextResponse.redirect(login);
+    return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
   }
 
   if (judgeArea && role !== "JUDGE") {

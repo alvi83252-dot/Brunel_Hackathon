@@ -1,6 +1,6 @@
 import { Countdown } from "@/components/countdown";
 import { JudgeCharts } from "@/components/judge-charts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MetricStrip, PageHeader } from "@/components/page-header";
 import { Progress } from "@/components/ui/progress";
 import { CRITERIA } from "@/lib/scoring";
 import { prisma } from "@/lib/prisma";
@@ -36,70 +36,76 @@ export default async function JudgeDashboard() {
     const average = scores.length ? Math.round((scores.reduce((sum, value) => sum + value, 0) / scores.length) * 100) / 100 : 0;
     return { track: shortNames[track.slug] ?? track.name, average, teams: track.projects.length };
   });
+  const progress = ideaCount ? Math.round((scoredByMe / ideaCount) * 100) : 0;
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-3xl font-bold">Judging overview</h1>
-        <p className="mt-1 text-muted-foreground">
-          {settings.blindJudging ? "Blind judging is on. Team identities are hidden." : "Blind judging is off. Team names are visible."}
-        </p>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Stat label="Teams" value={String(teamCount)} />
-        <Stat label="Ideas" value={String(ideaCount)} />
-        <Stat label="Final submissions" value={String(finalCount)} />
-        <Stat label="Submitted scores" value={`${scoreCount} · ${judgeCount} judges`} />
-      </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Your scoring</CardTitle>
-            <CardDescription>
-              {scoredByMe} of {ideaCount} project{ideaCount === 1 ? "" : "s"} submitted.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={ideaCount ? Math.round((scoredByMe / ideaCount) * 100) : 0} label={`${scoredByMe} of ${ideaCount} projects scored`} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-5">
-            <Countdown deadline={settings.judgingDeadline.toISOString()} label="Judging closes" />
-          </CardContent>
-        </Card>
-      </div>
-      <JudgeCharts
-        tracks={chartTracks}
-        funnel={[
-          { stage: "Teams", count: teamCount },
-          { stage: "Ideas", count: ideaCount },
-          { stage: "Repositories", count: finalCount },
-          { stage: "Scores", count: scoreCount },
+    <div>
+      <PageHeader
+        kicker="Judging"
+        title="Overview"
+        description={settings.blindJudging ? "Blind judging is on. Team identities are hidden." : "Blind judging is off. Team names are visible."}
+      />
+      <MetricStrip
+        items={[
+          { label: "Teams", value: String(teamCount) },
+          { label: "Ideas", value: String(ideaCount) },
+          { label: "Repositories", value: String(finalCount) },
+          { label: "Scores", value: `${scoreCount} from ${judgeCount} judges` },
         ]}
       />
-      <Card>
-        <CardContent className="grid gap-2 pt-5 text-sm text-muted-foreground">
-          <p className="font-semibold text-foreground">How a score becomes a ranking</p>
-          {CRITERIA.map((criterion) => (
-            <p key={criterion.key}>
-              {criterion.label}: {Math.round(criterion.weight * 100)}% — {criterion.description}
-            </p>
-          ))}
-          <p>A judge’s weighted score is the sum of score × weight, multiplied by 10 so it reads out of 100. The leaderboard averages every submitted judge score.</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="pt-5">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-1 text-2xl font-bold">{value}</p>
-      </CardContent>
-    </Card>
+      <section className="mt-10 grid gap-10 border-b border-border pb-10 lg:grid-cols-2">
+        <div>
+          <h2 className="text-sm font-semibold">Your scoring</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {scoredByMe} of {ideaCount} project{ideaCount === 1 ? "" : "s"} submitted.
+          </p>
+          <div className="mt-4">
+            <Progress value={progress} label={`${scoredByMe} of ${ideaCount} projects scored`} />
+            <p className="mt-2 text-xs tabular-nums text-muted-foreground">{progress}%</p>
+          </div>
+        </div>
+        <Countdown deadline={settings.judgingDeadline.toISOString()} label="Judging closes" />
+      </section>
+
+      <div className="mt-10">
+        <JudgeCharts
+          tracks={chartTracks}
+          funnel={[
+            { stage: "Teams", count: teamCount },
+            { stage: "Ideas", count: ideaCount },
+            { stage: "Repositories", count: finalCount },
+            { stage: "Scores", count: scoreCount },
+          ]}
+        />
+      </div>
+
+      <section className="mt-12">
+        <h2 className="text-sm font-semibold">How a score becomes a ranking</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+          A judge’s weighted score is the sum of score × weight, multiplied by 10 so it reads out of 100. The leaderboard averages every submitted judge score.
+        </p>
+        <div className="mt-4 overflow-x-auto border border-border bg-card">
+          <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+                <th className="px-4 py-3 font-semibold">Criterion</th>
+                <th className="px-4 py-3 font-semibold">Weight</th>
+                <th className="px-4 py-3 font-semibold">What it measures</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CRITERIA.map((criterion) => (
+                <tr key={criterion.key} className="border-b border-border last:border-b-0">
+                  <td className="px-4 py-3 font-semibold">{criterion.label}</td>
+                  <td className="px-4 py-3 tabular-nums">{Math.round(criterion.weight * 100)}%</td>
+                  <td className="px-4 py-3 text-muted-foreground">{criterion.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   );
 }

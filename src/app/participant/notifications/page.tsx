@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
 import { formatWhen } from "@/lib/utils";
 import { requireUser } from "@/server/guards";
@@ -18,44 +18,38 @@ export default async function NotificationsPage() {
   });
 
   return (
-    <div className="grid gap-4">
-      <div>
-        <h1 className="text-3xl font-bold">Confirmation emails</h1>
-        <p className="mt-1 text-muted-foreground">
-          Each registration and submission writes a branded message. When SMTP is configured, the same message is delivered.
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        kicker="Record"
+        title="Confirmation emails"
+        description="Each registration and submission writes a branded message. When SMTP is configured, the same message is delivered."
+      />
       {notifications.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>No emails yet</CardTitle>
-            <CardDescription>Register a team, then submit an idea and a repository. Each step records a confirmation.</CardDescription>
-          </CardHeader>
-        </Card>
+        <p className="border border-dashed border-border px-4 py-10 text-sm text-muted-foreground">
+          Register a team, then submit an idea and a repository. Each step records a confirmation.
+        </p>
       ) : (
-        notifications.map((notification) => (
-          <Card key={notification.id}>
-            <CardHeader>
+        <ol className="divide-y divide-border border-b border-border">
+          {notifications.map((notification) => (
+            <li key={notification.id} className="py-6">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={notification.delivery === "SENT" ? "success" : notification.delivery === "FAILED" ? "warning" : "muted"}>
                   {notification.delivery === "SENT" ? "Sent" : notification.delivery === "FAILED" ? "Delivery failed" : "Recorded"}
                 </Badge>
                 <Badge>{labels[notification.type as keyof typeof labels]}</Badge>
               </div>
-              <CardTitle className="text-xl">{notification.subject}</CardTitle>
-              <CardDescription>
+              <h2 className="mt-3 font-display text-2xl">{notification.subject}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 To {notification.toEmail} · {formatWhen(notification.createdAt)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <pre className="whitespace-pre-wrap rounded-xl bg-secondary p-4 text-sm">{notification.text}</pre>
-              <details>
+              </p>
+              <pre className="mt-4 whitespace-pre-wrap border border-border bg-secondary/50 p-4 font-sans text-sm leading-6">{notification.text}</pre>
+              <details className="mt-3">
                 <summary className="cursor-pointer text-sm font-semibold">View branded template</summary>
-                <iframe title={notification.subject} className="mt-3 h-80 w-full rounded-xl border border-border bg-white" sandbox="" srcDoc={notification.html} />
+                <iframe title={notification.subject} className="mt-3 h-80 w-full border border-border bg-white" sandbox="" referrerPolicy="no-referrer" srcDoc={notification.html} />
               </details>
-            </CardContent>
-          </Card>
-        ))
+            </li>
+          ))}
+        </ol>
       )}
     </div>
   );

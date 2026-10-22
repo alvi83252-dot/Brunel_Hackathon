@@ -23,7 +23,7 @@ export function BrandMark({ className = "h-20 w-auto sm:h-24" }: { className?: s
       alt=""
       width={512}
       height={680}
-      className={`shrink-0 rounded-lg bg-[#f4f1ea] object-contain shadow-sm ${className}`}
+      className={`shrink-0 bg-[#f4f1ea] object-contain ${className}`}
       onError={() => setFailed(true)}
     />
   );

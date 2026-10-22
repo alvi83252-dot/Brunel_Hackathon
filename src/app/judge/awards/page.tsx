@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/server/guards";
 import { getAwards } from "@/server/read";
 
@@ -8,36 +8,37 @@ export default async function AwardsPage() {
   const awards = await getAwards();
 
   return (
-    <div className="grid gap-4">
-      <div>
-        <h1 className="text-3xl font-bold">Awards</h1>
-        <p className="mt-1 max-w-3xl text-muted-foreground">
-          Winners are calculated from submitted scores. A team needs a final repository submission and at least one submitted score. Placements break ties by earlier submission, then team number.
-        </p>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
+    <div>
+      <PageHeader
+        kicker="Results"
+        title="Awards"
+        description="Winners are calculated from submitted scores. A team needs a final repository submission and at least one submitted score. Placements break ties by earlier submission, then team number."
+      />
+      <ol className="divide-y divide-border border-b border-border">
         {awards.rows.map((award) => (
-          <Card key={award.type}>
-            <CardHeader>
-              <div className="flex items-center justify-between gap-3">
-                <CardTitle className="text-lg">{award.title}</CardTitle>
-                {award.team ? <Badge variant="accent">{award.criterion ? `${award.score?.toFixed(2)} / 10` : `${award.score?.toFixed(2)} / 100`}</Badge> : <Badge>Open</Badge>}
-              </div>
-              <CardDescription>{award.rule}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {award.team ? (
-                <p>
-                  <span className="font-bold">{award.team}</span>
-                  <span className="text-muted-foreground"> · {award.projectTitle} · {award.track}</span>
+          <li key={award.type} className="grid gap-3 border-b border-border py-5 md:grid-cols-[14rem_minmax(0,1fr)_auto] md:items-start md:gap-8">
+            <div>
+              <p className="font-semibold">{award.title}</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">{award.rule}</p>
+            </div>
+            {award.team ? (
+              <div>
+                <p className="font-semibold">{award.team}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {award.projectTitle} · {award.track}
                 </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">No eligible project yet.</p>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No eligible project yet.</p>
+            )}
+            {award.team ? (
+              <Badge variant="accent">{award.criterion ? `${award.score?.toFixed(2)} / 10` : `${award.score?.toFixed(2)} / 100`}</Badge>
+            ) : (
+              <Badge>Open</Badge>
+            )}
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   );
 }

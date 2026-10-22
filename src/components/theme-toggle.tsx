@@ -18,8 +18,8 @@ export function ThemeToggle({ ghost = false }: { ghost?: boolean }) {
   }
 
   return (
-    <Button type="button" variant={ghost ? "ghost" : "secondary"} aria-pressed={dark} onClick={toggle}>
-      {dark ? "Light mode" : "Dark mode"}
+    <Button type="button" size="sm" variant={ghost ? "ghost" : "secondary"} aria-pressed={dark} onClick={toggle}>
+      {dark ? "Light" : "Dark"}
     </Button>
   );
 }

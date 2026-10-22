@@ -63,13 +63,13 @@ export function TeamForm({
       <Field label="Team name" htmlFor="teamName" error={errors.teamName} hint="This is the name judges see when blind judging is off." count={`${teamName.length}/60`}>
         <Input id="teamName" value={teamName} maxLength={60} disabled={locked || pending} onChange={(event) => setTeamName(event.target.value)} aria-invalid={Boolean(errors.teamName)} />
       </Field>
-      <div className="rounded-xl border border-border bg-secondary/60 p-4 text-sm">
+      <div className="border border-border bg-secondary/60 p-4 text-sm">
         <p className="font-semibold">Team captain</p>
         <p className="mt-1 text-muted-foreground">{captain.fullName} · {captain.studentId} · {captain.email}</p>
       </div>
       <div className="grid gap-4">
         {members.map((member, index) => (
-          <fieldset key={index} className="grid gap-3 rounded-2xl border border-border p-4">
+          <fieldset key={index} className="grid gap-3 border border-border p-4">
             <legend className="px-1 text-sm font-bold">{index === 0 ? "Captain" : `Teammate ${index}`}</legend>
             <Field label="Full name" htmlFor={`name-${index}`} error={errors[`members.${index}.fullName`]}>
               <Input id={`name-${index}`} value={member.fullName} disabled={locked || pending} onChange={(event) => updateMember(index, "fullName", event.target.value)} aria-invalid={Boolean(errors[`members.${index}.fullName`])} />
