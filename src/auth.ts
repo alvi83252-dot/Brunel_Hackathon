@@ -20,7 +20,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user) return null;
         const matches = await bcrypt.compare(parsed.data.password, user.passwordHash);
         if (!matches) return null;
-        return { id: user.id, email: user.email, name: user.name, role: user.role };
+        const role = user.role === "JUDGE" ? "JUDGE" : "PARTICIPANT";
+        return { id: user.id, email: user.email, name: user.name, role };
       },
     }),
   ],

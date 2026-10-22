@@ -30,7 +30,7 @@ async function setupRemote() {
   }
   client.close();
 
-  const { seed } = await import("./seed.ts");
+  const { seed } = await import("./seed");
   await seed();
   const { prisma } = await import("../src/lib/prisma");
   await prisma.$disconnect();

@@ -40,7 +40,7 @@ export default async function NotificationsPage() {
                 <Badge variant={notification.delivery === "SENT" ? "success" : notification.delivery === "FAILED" ? "warning" : "muted"}>
                   {notification.delivery === "SENT" ? "Sent" : notification.delivery === "FAILED" ? "Delivery failed" : "Recorded"}
                 </Badge>
-                <Badge>{labels[notification.type]}</Badge>
+                <Badge>{labels[notification.type as keyof typeof labels]}</Badge>
               </div>
               <CardTitle className="text-xl">{notification.subject}</CardTitle>
               <CardDescription>
