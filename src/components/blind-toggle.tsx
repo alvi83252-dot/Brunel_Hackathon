@@ -30,7 +30,7 @@ export function BlindToggle({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 border border-border bg-card px-5 py-4">
+    <div className="panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
       <div>
         <p className="text-base font-semibold">Blind judging {on ? "on" : "off"}</p>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">

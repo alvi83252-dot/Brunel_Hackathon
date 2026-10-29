@@ -37,9 +37,9 @@ export function Countdown({ deadline, label }: { deadline: string; label: string
   return (
     <div>
       <p className="kicker">{label}</p>
-      <dl className="mt-3 grid grid-cols-4 gap-px overflow-hidden border border-border bg-border">
+      <dl className="mt-3 grid grid-cols-4 overflow-hidden border border-border">
         {parts.map(([name, value]) => (
-          <div key={name} className="bg-card px-2 py-3 text-center">
+          <div key={name} className="border-r border-border px-2 py-3 text-center last:border-r-0">
             <dt className="kicker">{name}</dt>
             <dd className="mt-1 font-display text-3xl tabular-nums">{String(value).padStart(2, "0")}</dd>
           </div>

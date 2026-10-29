@@ -24,16 +24,16 @@ export default async function HomePage() {
 
   return (
     <Shell home="/" eyebrow="Hackathon Management Portal" links={[]} user={user ? { name: user.name, email: user.email } : null}>
-      <section className="grid items-end gap-12 border-b border-border pb-14 lg:grid-cols-[minmax(0,1.4fr)_20rem]">
-        <div>
-          <p className="kicker">Brunel Build 2026</p>
-          <h1 className="mt-4 max-w-3xl text-5xl leading-[1.05] text-foreground sm:text-6xl">
-            From registration to the winning team.
+      <section className="reveal grid items-stretch gap-6 lg:grid-cols-[minmax(0,1.35fr)_22rem]">
+        <div className="panel flex flex-col justify-end px-6 py-8 sm:px-8 sm:py-10">
+          <p className="kicker text-accent">Brunel Build 2026</p>
+          <h1 className="mt-3 max-w-3xl text-4xl leading-[1.05] text-foreground sm:text-5xl lg:text-6xl">
+            Brunel University Hackathon
           </h1>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-            Participants register a team, submit an idea, and hand in a repository. Judges score in the open or blind. The leaderboard and awards stay with the judges.
+          <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+            Register a team, submit an idea, and hand in a repository. Judges score in the open or blind. The leaderboard stays with the judges.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3">
             {user ? (
               <Button asChild size="lg">
                 <Link href={destination}>Open your portal</Link>
@@ -50,43 +50,44 @@ export default async function HomePage() {
             )}
           </div>
         </div>
-        <aside>
+        <aside className="panel reveal reveal-delay-1 px-5 py-6 sm:px-6">
           <p className="kicker">{settings?.venue ?? "Eastern Gateway, Brunel University London"}</p>
+          <h2 className="mt-2 font-display text-2xl">Key dates</h2>
           <dl className="mt-4 divide-y divide-border border-y border-border">
             {deadlines.map(([label, value]) => (
-              <div key={label} className="grid grid-cols-[9rem_1fr] gap-3 py-3 text-sm">
+              <div key={label} className="grid gap-1 py-3 text-sm sm:grid-cols-[8.5rem_1fr] sm:gap-3">
                 <dt className="text-muted-foreground">{label}</dt>
-                <dd className="font-semibold">{value}</dd>
+                <dd className="font-semibold leading-snug">{value}</dd>
               </div>
             ))}
           </dl>
         </aside>
       </section>
 
-      <section className="grid border-b border-border md:grid-cols-3 md:divide-x md:divide-border">
+      <section className="panel reveal reveal-delay-2 mt-6 grid md:grid-cols-3 md:divide-x md:divide-border">
         {steps.map(([index, title, copy]) => (
-          <article key={title} className="py-8 md:px-6 md:first:pl-0 md:last:pr-0">
+          <article key={title} className="border-b border-border px-5 py-5 last:border-b-0 md:border-b-0 md:px-6 md:py-6">
             <p className="font-display text-sm text-accent">{index}</p>
-            <h2 className="mt-3 text-xl font-semibold">{title}</h2>
+            <h2 className="mt-2 text-xl font-semibold">{title}</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p>
           </article>
         ))}
       </section>
 
-      <section className="pt-14">
-        <div className="flex items-end justify-between gap-4">
+      <section className="panel reveal reveal-delay-3 mt-6 overflow-hidden">
+        <div className="flex items-end justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
           <div>
             <p className="kicker">Programme</p>
-            <h2 className="mt-2 font-display text-4xl">Tracks</h2>
+            <h2 className="mt-1 font-display text-3xl sm:text-4xl">Tracks</h2>
           </div>
-          <p className="hidden text-sm text-muted-foreground sm:block">{tracks.length} tracks</p>
+          <p className="hidden text-sm font-medium text-muted-foreground sm:block">{tracks.length} tracks</p>
         </div>
-        <ul className="mt-6 divide-y divide-border border-y border-border">
+        <ul className="divide-y divide-border">
           {tracks.map((track, index) => (
-            <li key={track.id} className="grid gap-2 py-5 sm:grid-cols-[3rem_14rem_1fr] sm:items-baseline sm:gap-6">
-              <span className="font-display text-sm text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="text-base font-semibold">{track.name}</h3>
-              <p className="text-sm leading-6 text-muted-foreground">{track.summary}</p>
+            <li key={track.id} className="grid gap-1 px-5 py-4 sm:grid-cols-[3rem_minmax(12rem,18rem)_1fr] sm:items-baseline sm:gap-5 sm:px-6">
+              <span className="font-display text-base text-accent">{String(index + 1).padStart(2, "0")}</span>
+              <h3 className="text-lg font-semibold">{track.name}</h3>
+              <p className="text-base leading-7 text-muted-foreground">{track.summary}</p>
             </li>
           ))}
         </ul>

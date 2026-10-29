@@ -39,7 +39,7 @@ export function JudgeCharts({
 
 function ChartCard({ title, empty, children }: { title: string; empty: boolean; children: React.ReactNode }) {
   return (
-    <section className="border border-border bg-card p-4">
+    <section className="panel p-4">
       <h2 className="mb-3 text-sm font-semibold">{title}</h2>
       {empty ? <p className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">Nothing to chart yet.</p> : children}
     </section>

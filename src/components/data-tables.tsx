@@ -73,7 +73,7 @@ export function LeaderboardTable({ rows }: { rows: LeaderboardRow[] }) {
           </TrackButton>
         ))}
       </div>
-      <div className="overflow-x-auto border border-border bg-card">
+      <div className="panel overflow-x-auto">
         <table className="w-full min-w-[720px] border-collapse text-left text-sm">
           <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
             {table.getHeaderGroups().map((group) => (
@@ -163,11 +163,11 @@ export function ProjectTable({ rows }: { rows: ProjectRow[] }) {
   const table = useReactTable({ data: rows, columns, state: { sorting }, onSortingChange: setSorting, getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel() });
 
   if (rows.length === 0) {
-    return <p className="border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">No ideas have been submitted yet.</p>;
+    return <p className="panel px-4 py-10 text-center text-sm text-muted-foreground">No ideas have been submitted yet.</p>;
   }
 
   return (
-    <div className="overflow-x-auto border border-border bg-card">
+    <div className="panel overflow-x-auto">
       <table className="w-full min-w-[860px] border-collapse text-left text-sm">
         <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
           {table.getHeaderGroups().map((group) => (

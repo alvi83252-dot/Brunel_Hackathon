@@ -93,7 +93,7 @@ export default async function ProjectReviewPage({ params }: { params: Promise<{ 
           </ul>
         </section>
       </article>
-      <aside className="border border-border bg-card p-5 lg:sticky lg:top-6">
+      <aside className="panel p-5 lg:sticky lg:top-6">
         <h2 className="text-sm font-semibold">Score this project</h2>
         <div className="mt-4">
           <ScoreForm projectId={project.id} open={judgingOpen} initial={project.review as ReviewDraft | null} />

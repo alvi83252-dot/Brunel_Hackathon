@@ -54,8 +54,8 @@ export default async function JudgeDashboard() {
         ]}
       />
 
-      <section className="mt-10 grid gap-10 border-b border-border pb-10 lg:grid-cols-2">
-        <div>
+      <section className="mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="panel px-5 py-5 sm:px-6">
           <h2 className="text-sm font-semibold">Your scoring</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {scoredByMe} of {ideaCount} project{ideaCount === 1 ? "" : "s"} submitted.
@@ -65,10 +65,12 @@ export default async function JudgeDashboard() {
             <p className="mt-2 text-xs tabular-nums text-muted-foreground">{progress}%</p>
           </div>
         </div>
-        <Countdown deadline={settings.judgingDeadline.toISOString()} label="Judging closes" />
+        <div className="panel px-5 py-5 sm:px-6">
+          <Countdown deadline={settings.judgingDeadline.toISOString()} label="Judging closes" />
+        </div>
       </section>
 
-      <div className="mt-10">
+      <div className="mt-6">
         <JudgeCharts
           tracks={chartTracks}
           funnel={[
@@ -80,15 +82,17 @@ export default async function JudgeDashboard() {
         />
       </div>
 
-      <section className="mt-12">
-        <h2 className="text-sm font-semibold">How a score becomes a ranking</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          A judge’s weighted score is the sum of score × weight, multiplied by 10 so it reads out of 100. The leaderboard averages every submitted judge score.
-        </p>
-        <div className="mt-4 overflow-x-auto border border-border bg-card">
+      <section className="panel mt-6 overflow-hidden">
+        <div className="border-b border-border px-5 py-4 sm:px-6">
+          <h2 className="text-sm font-semibold">How a score becomes a ranking</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            A judge’s weighted score is the sum of score × weight, multiplied by 10 so it reads out of 100. The leaderboard averages every submitted judge score.
+          </p>
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+              <tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wide text-muted-foreground">
                 <th className="px-4 py-3 font-semibold">Criterion</th>
                 <th className="px-4 py-3 font-semibold">Weight</th>
                 <th className="px-4 py-3 font-semibold">What it measures</th>

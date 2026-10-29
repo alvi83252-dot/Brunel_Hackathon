@@ -51,25 +51,29 @@ export default async function ParticipantDashboard() {
         ]}
       />
 
-      <section className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)]">
-        <div>
+      <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)]">
+        <div className="panel px-5 py-5 sm:px-6">
           <h2 className="text-sm font-semibold">Entry</h2>
           <p className="mt-1 text-sm text-muted-foreground">Team, idea, then the GitHub repository.</p>
           <div className="mt-4">
             <StepProgress steps={steps} />
           </div>
         </div>
-        <Countdown deadline={nextDeadline.toISOString()} label={nextLabel} />
+        <div className="panel px-5 py-5 sm:px-6">
+          <Countdown deadline={nextDeadline.toISOString()} label={nextLabel} />
+        </div>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-sm font-semibold">Team members</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Student details stay with the team. Rankings are not shown in this portal.</p>
+      <section className="panel mt-6 overflow-hidden">
+        <div className="border-b border-border px-5 py-4 sm:px-6">
+          <h2 className="text-sm font-semibold">Team members</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Student details stay with the team. Rankings are not shown in this portal.</p>
+        </div>
         {team ? (
-          <div className="mt-4 overflow-x-auto border border-border bg-card">
+          <div className="overflow-x-auto">
             <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
+                <tr className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wide text-muted-foreground">
                   <th className="px-4 py-3 font-semibold">Name</th>
                   <th className="px-4 py-3 font-semibold">Role</th>
                   <th className="px-4 py-3 font-semibold">Student ID</th>
@@ -89,7 +93,7 @@ export default async function ParticipantDashboard() {
             </table>
           </div>
         ) : (
-          <p className="mt-4 border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">Register a team to see members here.</p>
+          <p className="px-5 py-8 text-sm text-muted-foreground sm:px-6">Register a team to see members here.</p>
         )}
       </section>
     </div>

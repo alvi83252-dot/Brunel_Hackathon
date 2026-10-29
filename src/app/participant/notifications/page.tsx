@@ -25,7 +25,7 @@ export default async function NotificationsPage() {
         description="Each registration and submission writes a branded message. When SMTP is configured, the same message is delivered."
       />
       {notifications.length === 0 ? (
-        <p className="border border-dashed border-border px-4 py-10 text-sm text-muted-foreground">
+        <p className="panel px-4 py-10 text-sm text-muted-foreground">
           Register a team, then submit an idea and a repository. Each step records a confirmation.
         </p>
       ) : (
